@@ -22,9 +22,10 @@ def lambda_handler(event, context):
     )
 
     if 'Item' in macaddrCheck:
+        print("macaddrCheck output: ", macaddrCheck['ResponseMetadata'])
         return "MAC address already exists. New device not created."
     else:
-        print("macaddrCheck output: " + str(macaddrCheck.get()))
+        print("macaddrCheck output: ", macaddrCheck['ResponseMetadata'])
         createDevice = iot.create_thing(thingName=thingName,
                                         attributePayload={
                                             'attributes': {
@@ -32,7 +33,7 @@ def lambda_handler(event, context):
                                             }
                                         }
                                         )
-        print("createDevice output: " + str(createDevice.get()))
+        print("createDevice output: ", createDevice['ResponseMetadata'])
 
         insertDevice = table.put_item(
             Item={
@@ -40,5 +41,7 @@ def lambda_handler(event, context):
                 'deviceid': createDevice['thingName'],
             }
         )
-        print("insertDevice output: " + str(insertDevice.get()))
+        print("insertDevice output: ", insertDevice['ResponseMetadata'])
+    print("createCert output: ", createCert['ResponseMetadata'])
 
+    print("insertCert output: ", insertCert['ResponseMetadata'])
