@@ -42,6 +42,25 @@ def lambda_handler(event, context):
             }
         )
         print("insertDevice output: ", insertDevice['ResponseMetadata'])
+
+    createCert = iot.create_keys_and_certificate(
+        setAsActive=True
+    )
     print("createCert output: ", createCert['ResponseMetadata'])
 
+    attachCert = iot.attach_thing_principal(
+        thingName= createDevice['thingName'],
+        principal= createCert['certificateArn']
+    )
+    print("attachCert output: ", attachCert['ResponseMetadata'])
+
+    insertCert = table.put_item(
+        Item={
+            'macaddr': macAddr,
+            'deviceid': createDevice['thingName'],
+            'certificatePem': createCert['certificatePem'],
+            'PublicKey': createCert['keyPair']['PublicKey'],
+            'PrivateKey': createCert['keyPair']['PrivateKey'],
+        }
+    )
     print("insertCert output: ", insertCert['ResponseMetadata'])
