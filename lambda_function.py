@@ -5,16 +5,15 @@ import boto3
 import uuid
 
 thingName = str(uuid.uuid4())
-tevent = { "body" : { "macaddr": "abc1234f" }}
 
 def lambda_handler(event, context):
 
-    macAddr = tevent['body']['macaddr']
+    macAddr = event['body']['macaddr']
 
     iot = boto3.client('iot')
     dynamodb = boto3.resource('dynamodb')
-
     table = dynamodb.Table('devices')
+
     macaddrCheck = table.get_item(
         Key={
             'macaddr': macAddr
