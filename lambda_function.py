@@ -12,7 +12,8 @@ def lambda_handler(event, context):
 
     iot = boto3.client('iot')
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('devices')
+    mapTable = dynamodb.Table('device-map')
+    certTable = dynamodb.Table('device-certs')
 
     macaddrCheck = table.get_item(
         Key={
@@ -53,7 +54,7 @@ def lambda_handler(event, context):
     )
     print("attachCert output: ", attachCert['ResponseMetadata'])
 
-    insertCert = table.put_item(
+    insertCert = certTable.put_item(
         Item={
             'macaddr': macAddr,
             'deviceid': createDevice['thingName'],
