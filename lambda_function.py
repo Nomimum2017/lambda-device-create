@@ -42,6 +42,25 @@ def lambda_handler(event, context):
     )
     print("createCert output: ", createCert['ResponseMetadata'])
 
+    parsedCertificatePem = []
+    for line in createCert['certificatePem']:
+        parsedline = line.rstrip('\n')
+        parsedCertificatePem.append(parsedline)
+        certficatePem = ''.join(parsedCertificatePem)
+
+    parsedPublicKey = []
+    for line in createCert['keyPair']['PublicKey']:
+        parsedline = line.rstrip('\n')
+        parsedPublicKey.append(parsedline)
+        publicKey = ''.join(parsedPublicKey)
+
+    parsedPrivateKey = []
+    for line in createCert['keyPair']['PublicKey']:
+        parsedline = line.rstrip('\n')
+        parsedPrivateKey.append(parsedline)
+        privateKey = ''.join(parsedPrivateKey)
+
+
     attachCert = iot.attach_thing_principal(
         thingName= createDevice['thingName'],
         principal= createCert['certificateArn']
@@ -51,9 +70,9 @@ def lambda_handler(event, context):
     insertCert = certTable.put_item(
         Item={
             'deviceId': createDevice['thingName'],
-            'certificatePem': createCert['certificatePem'],
-            'PublicKey': createCert['keyPair']['PublicKey'],
-            'PrivateKey': createCert['keyPair']['PrivateKey'],
+            'certificatePem': certficatePem,
+            'publicKey': publicKey,
+            'privateKey': privateKey,
         }
     )
     print("insertCert output: ", insertCert['ResponseMetadata'])
