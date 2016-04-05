@@ -5,10 +5,17 @@ import boto3
 import uuid
 
 thingName = str(uuid.uuid4())
+import re
 
 def lambda_handler(event, context):
 
     macAddr = event['body']['macAddr']
+    inputMacAddr = event['body']['macAddr']
+
+    macAddr = re.sub(':', '', inputMacAddr.lower())
+    macAddr = re.sub('-', '', macAddr)
+    macAddr = re.sub('\.', '', macAddr)
+    macAddr = re.sub(' ', '', macAddr)
 
     iot = boto3.client('iot')
     dynamodb = boto3.resource('dynamodb')
