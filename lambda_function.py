@@ -3,13 +3,11 @@ from __future__ import (absolute_import, division, print_function, unicode_liter
 
 import boto3
 import uuid
-
-thingName = str(uuid.uuid4())
 import re
 
 def lambda_handler(event, context):
 
-    macAddr = event['body']['macAddr']
+    deviceId = str(uuid.uuid4())
     inputMacAddr = event['body']['macAddr']
 
     macAddr = re.sub(':', '', inputMacAddr.lower())
@@ -33,7 +31,7 @@ def lambda_handler(event, context):
         return { "message": "MAC address already exists. New device not created." }
     else:
         print("macAddrCheck output: ", macAddrCheck['ResponseMetadata'])
-        createDevice = iot.create_thing(thingName=thingName)
+        createDevice = iot.create_thing(thingName=deviceId)
         print("createDevice output: ", createDevice['ResponseMetadata'])
 
         insertDevice = mapTable.put_item(
